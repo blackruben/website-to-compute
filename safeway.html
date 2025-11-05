@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Safeway - Signalement d'incidents</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+  header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+  }
+  .container {
+    margin: 50px auto;
+    width: 90%;
+    max-width: 500px;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+  input, textarea, button {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+  button {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover {
+    background-color: #c0392b;
+  }
+  #location {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #555;
+  }
+</style>
+</head>
+<body>
+
+<header>Safeway - Signalement Rapide</header>
+
+<div class="container">
+  <h2>Signaler un incident</h2>
+
+  <!-- Numéro de téléphone -->
+  <input type="tel" id="phone" placeholder="Votre numéro ou +226 44475445" value="+226 44475445">
+
+  <!-- Description de l'incident -->
+  <textarea id="description" placeholder="Décrivez brièvement l'événement..."></textarea>
+
+  <!-- Géolocalisation -->
+  <p id="location">Géolocalisation : non récupérée</p>
+  <button onclick="getLocation()">Récupérer ma position</button><br>
+
+  <!-- Envoyer / Appeler -->
+  <button onclick="sendReport()">Envoyer le signalement</button>
+  <button onclick="callNumber()">Appeler directement</button>
+</div>
+
+<script>
+let lat = null;
+let lon = null;
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                lat = position.coords.latitude.toFixed(5);
+                lon = position.coords.longitude.toFixed(5);
+                document.getElementById("location").innerText = Géolocalisation : ${lat}, ${lon};
+            },
+            () => {
+                alert("Impossible de récupérer la géolocalisation !");
+            }
+        );
+    } else {
+        alert("La géolocalisation n'est pas supportée par votre navigateur.");
+    }
+}
+
+function sendReport() {
+    const desc = document.getElementById("description").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+
+    if (!desc) {
+        alert("Veuillez entrer une description de l'incident !");
+        return;
+    }
+    if (lat === null || lon === null) {
+        alert("Veuillez récupérer votre position avant d'envoyer !");
+        return;
+    }
+    console.log("Signalement envoyé :", { phone: phone, description: desc, latitude: lat, longitude: lon });
+    alert(Signalement envoyé avec succès !\nNuméro : ${phone});
+    document.getElementById("description").value = "";
+    document.getElementById("location").innerText = "Géolocalisation : non récupérée";
+    lat = null;
+    lon = null;
+}
+
+function callNumber() {
+    const phone = document.getElementById("phone").value.trim();
+    if (!phone) {
+        alert("Veuillez renseigner un numéro !");
+        return;
+    }
+    // Ouvre l'application téléphone avec le numéro
+    window.location.href = tel:${phone};
+}
+</script>
+
+</body>
+</html>
